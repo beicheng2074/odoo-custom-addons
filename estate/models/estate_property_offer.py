@@ -66,3 +66,16 @@ class EstatePropertyOffer(models.Model):
                 raise UserError("An accepted offer cannot be refused.")
             record.status = "refused"
         return True
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            property_record = self.env["estate.property"].browse(vals["property_id"])
+            price = vals.get("price", 0.0)
+
+            if property_record.offer_ids and price < property_record.best_price:
+                raise UserError("The offer must be higher than the existing offers.")
+
+        offers = super().create(vals_list)
+        offers.mapped("property_id").write({"state": "offer_received"})
+        return offers
