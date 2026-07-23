@@ -5,4 +5,5 @@
     "summary": "Create customer invoices when properties are sold",
     "depends": ["estate", "account"],
     "license": "LGPL-3",
+    "author": "beicheng",
 }
